@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+<meta http-equiv="X-UA-TextLayoutMetrics" content="gdi">
+<meta http-equiv="Cache-Control" content="no-cache"/>
+<meta http-equiv="Expires" content="0"/>
+<meta http-equiv="Pragma" content="no-cache"/>
+<meta name="format-detection" content="telephone=no, address=no, email=no">
+<meta name="viewport" content="width=1280">
+<meta name="Title" content="" >
+<meta name="Description" content="" >
+<meta name="Keywords" content="" >
+<meta name="Robots" content="INDEX,FOLLOW">
+
+<title>추계예술대학교</title>
+<link rel="shortcut icon" type="image/x-icon" href="/images/common/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="/images/common/favicon.png">
+<link href="/css/style.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+	
+	<div class="login">
+		<div class="login_wrap">
+			<h1>추계예술대학교</h1>
+			<h2>추계예술대학교 강사채용 시스템</h2>
+			<div class="login_form">
+				<form action="/logInProc.do" method="post" autocomplete="off" id="fm">
+				<fieldset>
+					<legend>Login Form</legend>
+					<!-- <ul class="select_type">
+						<li><input type="radio" name="AUTH" id="AUTH_S" value="S"><label for="AUTH_S" class="fc0">직원</label></li>
+						<li><input type="radio" name="AUTH" id="AUTH_T" value="T"><label for="AUTH_T" class="fc0">강사</label></li>
+					</ul> -->
+					<ul>
+						<li>
+							<div class="field id">
+								<label for="userid" class="blind">이름</label>
+								<input type="text" name="name" placeholder="이름을 입력하세요" class="line_none">
+							</div>
+						</li>
+						<li>
+							<div class="field email">
+								<label for="password" class="blind">이메일</label>
+								<input type="text" name="email" placeholder="이메일을 입력하세요" maxlength="30" autocomplete="off" class="line_none">
+							</div>
+						</li>
+						<li>
+							<div class="field pw">
+								<label for="password" class="blind">비밀번호</label>
+								<input type="password" name="password" placeholder="비밀번호를 입력하세요" maxlength="30" autocomplete="off" class="line_none">
+							</div>
+						</li>
+						<li>
+							<ul class="bt_login_wrap">
+								<li>
+									<label for="password" class="blind">원서 수정 및 확인</label>
+									<button type="button" name="loginBtn" id="loginBtn" class="bt_login_page">원서 수정 및 확인</button>
+								</li>
+								<li>
+									<label for="password" class="blind">원서 신규작성</label>
+									<button type="button" name="appointment_start" id="appointment_start" class="bt_login_page">원서 신규작성</button>
+								</li>
+							</ul>
+						</li>
+					</ul>
+
+					<div class="bt_member_box">
+						<ul>
+							<li><a href="#" class="bt_idfind">회원가입</a></li>
+							<li><a href="#" class="bt_pwfind">ID 찾기</a></li>
+							<li><a href="#" class="bt_join">PW 찾기</a></li>
+						</ul>
+					</div>
+				</fieldset>
+				</form>
+			</div>
+			<div class="login_bottom">COPYRIGHT &copy; 2019 <em>CHUGYE UNIVERSITY FOR THE ART</em>. ALL RIGHTS RESERVED.</div>
+		</div>
+	</div>
+	<!-- // login-->
+	
+	
+	<div class="modal_popup"><!-- display:none 기본값, "on"클래스로 활성화 -->
+		<div class="modal_popup_page">
+			<div class="modal_popup_wrap">
+				<div class="popup_header">
+					<h1>회원가입</h1>
+					<div class="bt_close"><a href="#">창닫기</a></div>
+				</div>
+				<div class="section">
+					<div class="pt20">
+						<div class="post_tbl">
+							<div class="grid_top">
+								<div class="ls"><h4 class="article_tit">기본 정보</h4></div>
+								<div class="rs"><span class="req cmt_txt">은 필수입력 사항입니다.</span></div>
+							</div>
+							<table class="grid">
+								<caption>인적사항 입력</caption>
+								<colgroup>
+									<col width="25%">
+									<col width="75%">
+								</colgroup>
+								<tbody>
+									<tr>
+										<th scope="row"><span class="req">성명</span></th>
+										<td>
+											<div class="field">
+												<input type="text" name="" id="kor" class="text_field" placeholder="국문" title="" value="">
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<th scope="row"><span class="req">비밀번호</span></th>
+										<td>
+											<div class="field">
+												<input type="password" name="password" placeholder="비밀번호를 입력하세요" maxlength="30" autocomplete="off" class="text_field">
+											</div>
+										</td>
+									</tr>
+									
+									<tr>
+										<th scope="row"><span class="req">연락처</span></th>
+										<td>
+											<div class="field">
+												<ul class="mobile">
+													<li class="p30">
+														<select name="" class="text_field">
+															<option value="">010</option>
+														</select>
+													</li>
+													<li class="p40"><input type="text" name="" class="text_field"></li>
+													<li class="p30"><input type="text" name="" class="text_field"></li>
+												</ul>
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<th scope="row"><span class="req">이메일</span></th>
+										<td>
+											<div class="field">
+												<ul class="email">
+													<li><input type="text" name="" class="text_field"></li>
+													<li>
+														<select name=""  class="text_field">
+															<option value="" selected>직접입력</option>
+															<option value="">선택</option>
+															<option value="naver.com">naver.com</option>
+														</select>
+														<div class="pt5"><input type="text" name="" placeholder="직접입력 선택시" class="text_field"></div>
+													</li>
+												</ul>
+											</div>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+							<div class="comment">※ 입력하신 정보는 지원서 접수 시 사용되며, 일부 정보는 가입 후 수정이 불가합니다. 허위 정보 입력시에는 아이디/비빌번호 분실 시 본인 확인을 할 수 없습니다.</div>
+						</div>
+						<!-- //post_tbl -->
+						
+						<div class="post_bottom">
+							<div class="bt_list tr">
+								<label for="" class="blind">회원가입</label><button type="button" name="" id="" class="bt bt_on">회원가입</button>
+								<label for="" class="blind">닫기</label><button type="button" name="" id="" class="bt bt_nor">닫기</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- //section -->
+			</div>
+		</div>
+	</div>
+</body>
+</html>

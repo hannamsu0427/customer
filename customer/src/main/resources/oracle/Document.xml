@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Document">
+
+	<typeAlias alias="Document" type="com.itsp.vo.DocumentVO" />
+    
+    <resultMap id="MapForDocumentData" class="Document">    
+	    <result property="yy" column="yy" />		
+		<result property="term" column="term" />		
+		<result property="applyNo" column="apply_no" />	
+		<result property="publishDate" column="publish_date" />
+		<result property="title" column="title" />
+		<result property="institution" column="institution" />
+		<result property="memberCnt" column="member_cnt" />
+		<result property="authorType" column="author_type" />				
+	</resultMap>	
+	
+	<select id="selectDocumentData" resultMap="MapForDocumentData">
+		SELECT 
+			yy,
+			term,
+			apply_no,			
+			institution,	
+			Document_seq,
+			title,
+			publish_date,	
+			member_cnt,
+			author_type			
+		FROM HJDB.ATC215TL
+		WHERE apply_no = #applyNo#
+	</select>
+	
+	 <!--<insert id="saveProcDocumentData">
+		INSERT INTO HJDB.ATC215TL (
+			yy,
+			term,
+			apply_no,			
+			institution,
+			title,
+			publish_date,	
+			member_cnt,
+			author_type	
+		)VALUES(
+			#yy#,
+			#term#,
+			#applyNo#,	
+			#institution#,	
+			#title#,
+			#publishDate#,		
+			#memberCnt#,
+			#authorType#			
+		)
+	</insert>
+	
+	<delete id="deleteProcDocumentData">
+		DELETE FROM HJDB.ATC215TL WHERE apply_no = #applyNo#
+	</delete> -->
+</sqlMap>

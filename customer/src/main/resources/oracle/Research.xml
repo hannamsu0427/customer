@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Research">
+
+	<typeAlias alias="Research" type="com.itsp.vo.ResearchVO" />
+    
+    <resultMap id="MapForResearchData" class="Research">    
+	    <result property="yy" column="yy" />		
+		<result property="term" column="term" />		
+		<result property="applyNo" column="apply_no" />		
+		<result property="researchSeq" column="research_seq" />
+		<result property="publishDate" column="publish_date" />
+		<result property="title" column="title" />
+		<result property="institution" column="institution" />
+		<result property="memberCnt" column="member_cnt" />
+		<result property="authorType" column="author_type" />	
+		<result property="researchCapa" column="research_capa" />		
+		<result property="researchRole" column="research_role" />			
+	</resultMap>	
+	
+	<select id="seqNextVal" resultClass="string">
+		SELECT DATA_SEQUENCE.NEXTVAL AS SEQ FROM DUAL
+	</select>	
+	
+	<select id="selectCountResearchData" resultClass="int">
+		SELECT COUNT(*)
+		FROM HJDB.ATC215TL 
+		WHERE research_seq = #researchSeq#
+		AND apply_no = #applyNo#
+	</select>
+	
+	<select id="selectResearchData" resultMap="MapForResearchData">
+		SELECT 
+			yy,
+			term,
+			apply_no,			
+			institution,	
+			research_seq,
+			title,
+			publish_date,	
+			member_cnt,
+			author_type,
+			research_capa,
+			research_role	
+		FROM HJDB.ATC215TL
+		WHERE apply_no = #applyNo#
+		ORDER BY publish_date ASC
+	</select>
+	
+	<insert id="saveProcResearchData">
+		INSERT INTO HJDB.ATC215TL (
+			yy,
+			term,
+			apply_no,			
+			institution,	
+			research_seq,
+			title,
+			publish_date,	
+			member_cnt,
+			author_type,
+			research_capa,
+			research_role
+		)VALUES(
+			#yy#,
+			#term#,
+			#applyNo#,	
+			#institution#,	
+			#researchSeq#,
+			#title#,
+			#publishDate#,		
+			#memberCnt#,
+			#authorType#,
+			#researchCapa#,
+			#researchRole#	
+		)
+	</insert>
+	
+	<update id="updateProcResearchData">
+		UPDATE HJDB.ATC215TL SET
+			author_type = #authorType#,
+			member_cnt = #memberCnt#,
+			publish_date = #publishDate#,
+			title = #title#,
+			institution = #institution#,
+			research_capa = #researchCapa#,
+			research_role = #researchRole#
+		WHERE research_seq = #researchSeq#
+		AND apply_no = #applyNo#
+	</update>
+	
+	<delete id="deleteProcResearchData">
+		DELETE FROM HJDB.ATC215TL 
+		WHERE research_seq = #researchSeq#
+		AND apply_no = #applyNo#
+	</delete>
+</sqlMap>

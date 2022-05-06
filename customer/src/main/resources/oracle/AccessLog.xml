@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="AccessLog">
+
+	<typeAlias alias="AccessLog" type="com.itsp.vo.AccessLogVO" />
+    
+    <!-- <resultMap id="MapForCareerData" class="Career">    
+	    <result property="yy" column="yy" />		
+		<result property="term" column="term" />		
+		<result property="applyNo" column="apply_no" />
+		<result property="careerSeq" column="career_seq" />
+		<result property="dateFrom" column="date_from" />
+		<result property="dateTo" column="date_to" />
+		<result property="institution" column="institution" />
+		<result property="position" column="position" />
+		<result property="career" column="career" />				
+	</resultMap> -->
+	
+	<insert id="insertProcAccessLogData" >
+		INSERT INTO HJDB.ATC220TL (
+		yy,
+		term,
+		apply_no,
+		sess_date,
+		host_name,
+		ip_address ,
+		sess_module,
+		log_gubun
+		
+		)VALUES(
+		
+		#yy#,
+		#term#,
+		#applyNo#,
+		SYSDATE,
+		#hostName#,
+		#ipAddress#,
+		#sessModule#,
+		#logGubun#
+		
+		)
+	</insert>
+	
+	
+	<!-- <select id="selectSysdate" resultClass="int">
+		SELECT SYSDATE FROM DUAL
+	</select> -->
+
+</sqlMap>

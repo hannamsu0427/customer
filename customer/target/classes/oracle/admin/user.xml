@@ -1,0 +1,648 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="User">
+
+	<typeAlias alias="User" type="com.itsp.vo.admin.UserVO" />
+	
+	<resultMap id="MapForUser" class="User">	
+	<result property="num" column="RNUM" />
+	<result property="yy" column="yy" />
+	<result property="term" column="term" />
+	<result property="userId" column="user_id" />
+	<result property="userName" column="user_name" />
+	<result property="password" column="password" />
+	<result property="univeList" column="dpt_cd1" />
+	<result property="dptCd1" column="dpt_cd1" />
+	<result property="dptCd1Name" column="dpt_cd1_name" />
+	<result property="dptCd2" column="dpt_cd2" />
+	<result property="dptCd2Name" column="dpt_cd2_name" />
+	<result property="etc" column="etc" />
+	<result property="regDate" column="reg_date" />
+	<result property="regId" column="reg_id" />
+	<result property="regName" column="reg_name" />
+	<result property="regIp" column="reg_ip" />
+	</resultMap>
+	
+	<resultMap id="MapForUserData" class="User">
+	<result property="yy" column="yy" />
+	<result property="term" column="term" />
+	<result property="userId" column="user_id" />
+	<result property="userName" column="user_name" />
+	<result property="password" column="password" />
+	<result property="dptCd1" column="dpt_cd1" />
+	<result property="dptCd2" column="dpt_cd2" />
+	<result property="etc" column="etc" />
+	<result property="regDate" column="reg_date" />
+	<result property="regId" column="reg_id" />
+	<result property="regName" column="reg_name" />
+	<result property="regIp" column="reg_ip" />
+	</resultMap>
+	
+	<!-- <select id="seqNextVal" resultClass="string">
+		SELECT DATA_SEQUENCE.NEXTVAL AS seq FROM DUAL
+	</select> -->
+	
+	<select id="selectTotalCount" resultClass="int">
+	SELECT COUNT(*) FROM(
+			SELECT * FROM HJDB.ATC222TL 
+			WHERE 1=1
+			<isNotEmpty property="searchValue" prepend="AND">
+			(
+				USER_ID LIKE '%'||#searchValue#||'%'
+				OR
+				USER_NAME LIKE '%'||#searchValue#||'%'
+			)
+			</isNotEmpty> 
+		) 
+	</select>
+	
+	<select id="selectCountUserData" resultClass="int">
+		SELECT COUNT(*)
+		FROM HJDB.ATC222TL 
+		WHERE 
+		yy = #yy#
+		AND term = #term#
+		AND user_id = #userId#		
+	</select>
+	
+	<insert id="saveProcUserData">
+		INSERT INTO HJDB.ATC222TL (
+			yy,
+			term,
+			user_id,
+			user_name,
+			password,
+			dpt_cd1,
+			dpt_cd2,
+			etc,
+			reg_date,
+			reg_id,
+			reg_name,
+			reg_ip
+		)VALUES(
+			#yy#,
+			#term#,
+			#userId#,
+			#userName#,
+			#password#,
+			#univeList#,
+			#depList#,
+			#etc#,
+			SYSDATE,
+			#regId#,
+			#regName#,
+			#regIp#					
+		)
+	</insert>
+	
+	<delete id="deleteProcUserData">
+		DELETE HJDB.ATC222TL where user_id = #userId#
+	</delete>
+	
+	<select id="selectUser" resultMap="MapForUserData">
+		SELECT 
+			yy,
+			term,
+			user_id,
+			user_name,
+			password,
+			dpt_cd1,
+			dpt_cd2,
+			etc,
+			reg_date,
+			reg_id,
+			reg_name,
+			reg_ip
+		FROM HJDB.ATC222TL
+		WHERE yy = #yy#
+		AND term = #term#
+		AND user_id = #userId#
+		
+	</select>
+	
+	<select id="selectUserList" resultMap="MapForUser">
+	
+	SELECT * FROM (
+			SELECT ROWNUM AS RNUM,A.* FROM (
+	            SELECT
+				   yy,
+					term,
+					user_id,
+					user_name,
+					password,
+					dpt_cd1,
+						(SELECT 
+							SYS020_FNAME 
+							FROM HJDB.SYS020TL
+						WHERE 
+							SYS020_COL_CD = dpt_cd1 ) dpt_cd1_name,
+					dpt_cd2,
+						(SELECT NVL(B.SYS030_FNAME, A.SYS020_FNAME)
+						 FROM HJDB.SYS020TL A
+						 FULL OUTER JOIN HJDB.SYS030TL B ON B.SYS030_UP_CD = A.SYS020_COL_CD	
+						 WHERE 1=1
+						 AND A.SYS020_COL_CD = dpt_cd1
+						 AND B.SYS030_DPT_CD = dpt_cd2) dpt_cd2_name,
+					etc,
+					reg_date,
+					reg_id,
+					reg_name,
+					reg_ip
+				FROM
+				    hjdb.atc222tl X
+				WHERE 1=1 
+				<isNotEmpty property="userId" prepend="AND">
+					user_id = #userId#
+				</isNotEmpty>
+					<isNotEmpty property="userName" prepend="AND">
+					user_name = #userName#
+					</isNotEmpty>
+					<isNotEmpty property="dptCd1" prepend="AND">
+					dpt_cd1 = #dptCd1#
+					</isNotEmpty>
+					<isNotEmpty property="dptCd2" prepend="AND">
+					dpt_cd2 = #dptCd2#
+					</isNotEmpty>
+					AND yy = #yy#
+					AND term = #term#
+				<isNotEmpty property="searchValue" prepend="AND">
+				(
+					user_id LIKE '%'||#searchValue#||'%'
+					OR
+					user_name LIKE '%'||#searchValue#||'%'
+				)
+				</isNotEmpty>
+			) A
+		)
+		WHERE 1=1
+		<isNotEmpty property="startNum" prepend="AND">
+		RNUM BETWEEN #startNum#
+		AND #endNum#
+		</isNotEmpty>
+		
+	
+	<!-- SELECT ROW_NUMBER() OVER(ORDER BY dpt_cd1, dpt_cd2) NUM, 
+			yy,
+			term,
+			user_id,
+			user_name,
+			password,
+			dpt_cd1,
+				(SELECT 
+					SYS020_FNAME 
+					FROM HJDB.SYS020TL
+				WHERE 
+					SYS020_COL_CD = dpt_cd1 ) dpt_cd1_name,
+			dpt_cd2,
+				(SELECT NVL(B.SYS030_FNAME, A.SYS020_FNAME)
+				 FROM HJDB.SYS020TL A
+				 FULL OUTER JOIN HJDB.SYS030TL B ON B.SYS030_UP_CD = A.SYS020_COL_CD	
+				 WHERE 1=1
+				 AND A.SYS020_COL_CD = dpt_cd1
+				 AND B.SYS030_DPT_CD = dpt_cd2 ) dpt_cd2_name,
+			etc,
+			reg_date,
+			reg_id,
+			reg_name,
+			reg_ip
+		FROM hjdb.atc222tl
+		WHERE 1=1			
+			<isNotEmpty property="userId" prepend="AND">
+			user_id = #userId#
+			</isNotEmpty>
+			<isNotEmpty property="userName" prepend="AND">
+			user_name = #userName#
+			</isNotEmpty>
+			<isNotEmpty property="dptCd1" prepend="AND">
+			dpt_cd1 = #dptCd1#
+			</isNotEmpty>
+			<isNotEmpty property="dptCd2" prepend="AND">
+			dpt_cd2 = #dptCd2#
+			</isNotEmpty>
+			AND yy = #yy#
+			AND term = #term#
+			ORDER BY dpt_cd1, dpt_cd2 DESC -->
+	</select>
+	
+	<update id="updateProcUserData">
+		UPDATE HJDB.ATC222TL 
+		SET 
+			yy = #yy#,
+			term = #term#,		
+			user_id = #userId#,
+			user_name = #userName#,
+			dpt_cd1 = #dptCd1#,
+			dpt_cd2 = #depList#,
+			etc = #etc#
+			<isNotEmpty property="password" prepend=",">
+			password = #password#
+			</isNotEmpty>
+		WHERE yy = #yy#
+		AND term = #term#
+		AND user_id = #userId#
+	</update>
+	
+	
+	<delete id="deleteProcUser">
+		delete HJDB.ATC222TL 
+		where
+		seq = #seq#
+	</delete>
+	
+	
+	
+	
+	<!-- <resultMap id="MapForunivList" class="PersonalData">
+		<result property="colCd" column="SYS020_COL_CD" />
+		<result property="sName" column="SYS020_FNAME" />
+	</resultMap>
+	
+	<resultMap id="MapForDepList" class="PersonalData">
+		<result property="colCd" column="SYS030_DPT_CD" />
+		<result property="sName" column="SYS030_FNAME" />
+	</resultMap>
+	
+	<resultMap id="MapForFieldList" class="PersonalData">
+		<result property="branchSeq" column="BRANCH_SEQ" />
+		<result property="branch" column="BRANCH" />
+	</resultMap>
+	
+	<resultMap id="MapForUnivDep" class="PersonalData">
+		<result property="dptCd1" column="DPT_CD1" />
+		<result property="dptCd2" column="DPT_CD2" />
+		<result property="branch" column="BRANCH" />
+		<result property="syllabusApply" column="SYLLABUS_APPLY" />
+				
+	</resultMap>	
+	
+	
+	<resultMap id="MapForPersonalData" class="PersonalData">
+		<result property="yy" column="yy" />
+		<result property="term" column="term" />
+		<result property="applyNo" column="apply_no" />
+		<result property="applyDate" column="apply_date" />
+		<result property="confirmYn" column="confirm_yn" />
+		<result property="confirmDate" column="confirm_date" />
+		<result property="confirmNo" column="confirm_no" />
+		<result property="branchSeq" column="branch_seq" />
+		<result property="name" column="name" />
+		<result property="nameEng" column="name_eng" />
+		<result property="birthDate" column="birth_date" />
+		<result property="age" column="age" />
+		<result property="sex" column="sex" />
+		<result property="nationality" column="nationality" />
+		<result property="zipCode" column="zip_code" />
+		<result property="address1" column="address1" />
+		<result property="address2" column="address2" />
+		<result property="address3" column="address3" />
+		<result property="mobileNumber" column="mobile_number" />
+		<result property="phoneNumber" column="phone_number" />
+		<result property="officeNumber" column="office_number" />
+		<result property="email" column="email" />
+		<result property="diplomaDoc" column="diploma_doc" />
+		<result property="careerDoc" column="career_doc" />
+		<result property="researchDoc" column="research_doc" />
+		<result property="syllabusDoc" column="syllabus_doc" />
+		<result property="passGubun" column="pass_gubun" />	
+		<result property="nationCode" column="nation_code" />		
+	</resultMap>
+	
+	<resultMap id="MapForAjaxDepList" class="PersonalData">
+		<result property="dptCd2" column="SYS030_DPT_CD" />
+		<result property="branch" column="SYS030_FNAME" />
+	</resultMap>
+	
+	<resultMap id="MapForAjaxFieldList" class="PersonalData">
+		<result property="branchSeq" column="BRANCH_SEQ" />
+		<result property="branch" column="BRANCH" />
+	</resultMap>
+	
+	<resultMap id="MapForPersonalDataBranch" class="PersonalData">
+		<result property="branchSeq" column="BRANCH_SEQ" />
+		<result property="branch" column="branch" />
+		<result property="applyNo" column="apply_no" />		
+		<result property="dptCd2Name" column="SYS030_FNAME" />
+		<result property="dptCd1Name" column="SYS020_FNAME" />
+		<result property="dptCd1" column="SYS020_COL_CD" />
+		<result property="dptCd2" column="SYS030_DPT_CD" />	
+	</resultMap>
+	
+	<resultMap id="MapForNationalList" class="PersonalData">
+		<result property="code" column="code" />
+		<result property="fname" column="fname" />
+	</resultMap>
+	
+	<select id="selectNationalList" resultMap="MapForNationalList">
+			SELECT CODE, FNAME
+			FROM CDDB.KCH041M	
+			ORDER BY FNAME ASC
+	</select>
+	
+	<select id="selectunivList" resultMap="MapForunivList">
+		SELECT DISTINCT SYS020_COL_CD, SYS020_FNAME 
+		FROM HJDB.SYS020TL A
+		JOIN HJDB.ATC202TL B
+		ON A.SYS020_COL_CD = B.DPT_CD1	
+		WHERE A.SYS020_FNAME IS NOT NULL
+		AND B.YY = #yy#
+		AND B.TERM = #term#
+		ORDER BY SYS020_COL_CD ASC	
+	</select>
+	
+	<select id="selectAjaxDepList" resultMap="MapForAjaxDepList">
+		SELECT DISTINCT B.SYS030_FNAME, B.SYS030_DPT_CD 
+		FROM HJDB.ATC202TL A
+		JOIN HJDB.SYS030TL B
+		ON A.DPT_CD2 = B.SYS030_DPT_CD		
+		WHERE A.DPT_CD1 = #selectUniv#
+		AND A.YY = #yy#
+		AND A.TERM = #term#
+		ORDER BY B.SYS030_DPT_CD ASC	
+	</select>
+	
+	<select id="selectAjaxFieldList" resultMap="MapForAjaxFieldList">
+		SELECT DISTINCT BRANCH_SEQ, BRANCH
+		FROM HJDB.ATC202TL 	
+		WHERE 1=1
+		AND DPT_CD1 = #selectUniv#	
+		AND YY = #yy#
+		AND TERM = #term#
+		<isNotEmpty property="selectUniv" prepend="AND">		
+		DPT_CD1 = #selectUniv#		
+		</isNotEmpty>
+		<isNotEmpty property="selectDep" prepend="AND">		
+		DPT_CD2 = #selectDep#		
+		</isNotEmpty>
+		<isEmpty property="selectDep" prepend="AND">		
+		DPT_CD2 IS NULL	
+		</isEmpty>
+		ORDER BY BRANCH ASC	
+	</select>
+	
+	<select id="selectDepList" resultMap="MapForDepList">
+		SELECT DISTINCT SYS030_DPT_CD, SYS030_FNAME 
+		FROM HJDB.SYS030TL A
+		JOIN HJDB.ATC202TL B ON A.SYS030_DPT_CD = B.DPT_CD2			
+		WHERE A.SYS030_FNAME IS NOT NULL
+		AND B.YY = #yy#
+		AND B.TERM = #term#
+		<isNotEmpty property="dptCd1" prepend="AND">
+			B.dpt_cd1 = #dptCd1#
+		</isNotEmpty>
+		ORDER BY SYS030_DPT_CD ASC		
+	</select>	
+	
+	<select id="selectFieldList" resultMap="MapForFieldList">
+		SELECT 
+			BRANCH_SEQ, BRANCH 
+		FROM HJDB.ATC202TL 
+		WHERE 1=1
+		AND YY = #yy#
+		AND TERM = #term#
+		<isNotEmpty property="dptCd1" prepend="AND">
+			dpt_cd1 = #dptCd1#
+		</isNotEmpty>
+		<isNotEmpty property="dptCd2" prepend="AND">
+			dpt_cd2 = #dptCd2#
+		</isNotEmpty>
+		<isEmpty property="dptCd2" prepend="AND">
+			dpt_cd2 IS NULL
+		</isEmpty>
+		
+		ORDER BY BRANCH_SEQ DESC
+	</select>
+	
+	<select id="selectUnivDep" resultMap="MapForUnivDep">
+		SELECT 
+			DPT_CD1, DPT_CD2, BRANCH, SYLLABUS_APPLY
+		FROM HJDB.ATC202TL 
+		WHERE 
+		BRANCH_SEQ = #branchSeq#	
+		
+	</select>
+	
+	<select id="selectUnivName" resultMap="MapForunivList">
+		SELECT 
+			SYS020_COL_CD, SYS020_FNAME 
+		FROM HJDB.SYS020TL
+		WHERE 
+		SYS020_COL_CD = #dptCd1#			
+	</select>
+	
+	<select id="selectDepName" resultMap="MapForDepList">
+		SELECT 
+			SYS030_DPT_CD, SYS030_FNAME 
+		FROM HJDB.SYS030TL
+		WHERE 
+		SYS030_DPT_CD = #dptCd2#	
+		
+		SELECT DISTINCT SYS030_DPT_CD, SYS030_FNAME FROM HJDB.SYS030TL A
+		JOIN HJDB.ATC202TL B
+		ON A.SYS030_DPT_CD = B.DPT_CD2	
+		WHERE 1=1
+		<isNotEmpty property="dptCd1" prepend="AND">
+			B.dpt_cd1 = #dptCd1#
+		</isNotEmpty>
+		<isNotEmpty property="dptCd2" prepend="AND">
+			B.dpt_cd2 = #dptCd2#
+		</isNotEmpty>
+		<isEmpty property="dptCd2" prepend="AND">
+			B.dpt_cd2 IS NULL
+		</isEmpty>		
+	</select>
+	
+	기존 등록정보 확인 카운트
+	<select id="selectCountpersonalData" resultClass="int">
+		SELECT COUNT(*)
+		FROM HJDB.ATC210TL 
+		WHERE NAME = #name#
+		and EMAIL = #email#
+		<isNotEmpty property="branchSeq" prepend="AND">
+		BRANCH_SEQ = #branchSeq#
+		</isNotEmpty>
+	</select>
+	
+	접수번호 등록용 카운트
+	<select id="selectCountpersonalDataBranchSeq" resultClass="int">
+		SELECT COUNT(*)
+		FROM HJDB.ATC210TL 
+		WHERE confirm_yn = 'Y'
+		AND branch_seq = #branchSeq#
+		
+	</select>
+	
+	<select id="seqNextVal" resultClass="string">
+		SELECT APPLYNO_SEQUENCE.NEXTVAL AS APPLY_NO FROM DUAL
+	</select>
+	
+	<insert id="saveProcPersonalData">
+		INSERT INTO HJDB.ATC210TL (
+			yy,
+			term,
+			apply_no,
+			apply_date ,
+			confirm_yn,
+			branch_seq,
+			name,
+			name_eng,
+			birth_date,
+			age,
+			sex,
+			nationality,
+			zip_code,
+			address1,
+			address2,
+			address3,
+			mobile_number,
+			email,
+			password,
+			diploma_doc,
+			career_doc,
+			research_doc,
+			syllabus_doc,
+			pass_gubun,
+			nation_code
+		)VALUES(
+			#yy#,
+			#term#,
+			APPLYNO_SEQUENCE.NEXTVAL,
+			sysdate, 
+			'N',
+			#branchSeq#,
+			#name#,
+			#nameEng#,
+			#birthDate#,
+			#age#,
+			#sex#,
+			(select fname from CDDB.KCH041M where CODE = #nationCode#),
+			#zipCode#,
+			#address1#,
+			#address2#,
+			#address3#,
+			#mobileNumber#,
+			#email#,
+			#password#,
+			'N',
+			'N',
+			'N',
+			'N',
+			'N',
+			#nationCode#					
+		)
+	</insert>
+	
+	<update id="updateProcPersonalData">
+		UPDATE HJDB.ATC210TL 
+		SET 
+			yy = #yy#,
+			term = #term#,		
+			branch_seq = #branchSeq#,
+			name = #name#,			
+			name_eng = #nameEng#,
+			birth_date = #birthDate#,
+			age = #age#,
+			sex = #sex#,
+			nationality = (select fname from CDDB.KCH041M where CODE = #nationCode#),
+			zip_code = #zipCode#,
+			address1 = #address1#,
+			address2 = #address2#,
+			address3 = #address3#,
+			mobile_number = #mobileNumber#,
+			email = #email#,
+			nation_code = #nationCode#			
+			<isNotEmpty property="password" prepend=",">
+			password = #password#
+			</isNotEmpty>
+		WHERE apply_no = #applyNo#
+	</update>
+	
+	<update id="updateProcPersonalDocData">
+		UPDATE HJDB.ATC210TL 
+		SET 
+			apply_no = #applyNo#
+			<isNotEmpty property="diplomaDoc" prepend=",">		
+			diploma_doc = #diplomaDoc#		
+			</isNotEmpty>
+			<isNotEmpty property="careerDoc" prepend=",">		
+			career_doc = #careerDoc#		
+			</isNotEmpty>
+			<isNotEmpty property="researchDoc" prepend=",">		
+			research_doc = #researchDoc#		
+			</isNotEmpty>	
+			<isNotEmpty property="syllabusDoc" prepend=",">
+			syllabus_doc = #syllabusDoc#
+			</isNotEmpty>
+			<isNotEmpty property="etcDoc" prepend=",">
+			etc_doc = #etcDoc#
+			</isNotEmpty>
+		WHERE apply_no = #applyNo#
+	</update>
+	
+	<select id="selectPersonalData" resultMap="MapForPersonalData">
+		SELECT 		
+			yy,
+			term,
+			apply_no,
+			apply_date,
+			confirm_yn,
+			confirm_date,
+			confirm_no,
+			branch_seq,
+			name,
+			name_eng,
+			birth_date,
+			age,
+			sex,
+			nationality,
+			zip_code,
+			address1,
+			address2,
+			address3,
+			mobile_number,
+			phone_number,
+			office_number,
+			email,
+			diploma_doc,
+			career_doc,
+			research_doc,
+			syllabus_doc,
+			pass_gubun,
+			nation_code
+		FROM HJDB.ATC210TL
+		WHERE 1=1 
+		AND rownum = 1
+		<isNotEmpty property="applyNo" prepend="AND">
+		apply_no = #applyNo#
+		</isNotEmpty>		
+		<isEmpty property="applyNo" prepend="AND">
+		name = #name#	
+		and email = #email#
+		</isEmpty>		
+		<isNotEmpty property="branchSeq" prepend="AND">
+		branch_seq = #branchSeq#
+		</isNotEmpty>
+		
+	</select>
+	
+	<select id="selectPersonalDataBranch" resultMap="MapForPersonalDataBranch">
+		SELECT B.BRANCH_SEQ, B.BRANCH, A.APPLY_NO, NVL(C.SYS030_FNAME, D.SYS020_FNAME) SYS030_FNAME, D.SYS020_FNAME, D.SYS020_COL_CD, C.SYS030_DPT_CD
+		FROM HJDB.ATC210TL A
+		INNER JOIN HJDB.ATC202TL B ON A.BRANCH_SEQ = B.BRANCH_SEQ
+		LEFT JOIN HJDB.SYS030TL C /*학과*/ ON B.DPT_CD2 = C.SYS030_DPT_CD
+		LEFT JOIN HJDB.SYS020TL D /*대학*/ ON B.DPT_CD1 = D.SYS020_COL_CD		
+		WHERE 
+		A.name = #name#
+		AND A.email = #email#
+		AND A.yy = #yy#
+		AND A.term = #term#
+		ORDER BY D.SYS020_COL_CD, C.SYS030_DPT_CD , B.BRANCH ASC		
+	</select> -->
+	
+	
+	
+	
+	<!-- <select id="selectSysdate" resultClass="int">
+		SELECT SYSDATE FROM DUAL
+	</select> -->
+
+</sqlMap>

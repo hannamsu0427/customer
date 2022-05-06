@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="attachFile">
+
+	<typeAlias alias="attachFile" type="com.itsp.vo.AttachFiles" />
+	
+	<resultMap id="Map" class="attachFile">
+		<result property="yy" column="YY" />
+		<result property="term" column="TERM" />
+		<result property="seq" column="SEQ" />
+		<result property="applyNo" column="APPLY_NO" />
+		<result property="realFileName" column="REAL_FILE_NAME" />
+		<result property="realFilePath" column="REAL_FILE_PATH" />
+		<result property="savedFileName" column="SAVED_FILE_NAME" />
+		<result property="savedFilePath" column="SAVED_FILE_PATH" />
+		<result property="fileType" column="FILE_TYPE" />
+		<result property="extention" column="EXTENTION" />
+		<result property="fileSize" column="FILE_SIZE" />
+		<result property="regDate" column="REG_DATE" />
+		<result property="kind" column="KIND" />
+	</resultMap>
+	
+	<select id="selectFileList" resultMap="Map">
+		SELECT 
+			YY ,
+			TERM,
+			SEQ,
+			APPLY_NO,
+			REAL_FILE_NAME,
+			REAL_FILE_PATH,
+			SAVED_FILE_NAME,
+			SAVED_FILE_PATH,
+			FILE_TYPE,
+			EXTENTION,
+			FILE_SIZE,
+			TO_CHAR(REG_DATE, 'YYYY-MM-DD') AS REG_DATE,
+			KIND
+		FROM HJDB.ATC223TL
+		WHERE 1=1
+		AND APPLY_NO = #applyNo#
+		ORDER BY KIND ASC
+	</select>
+	
+	<select id="selectFile" resultMap="Map">
+		SELECT
+			YY ,
+			TERM, 
+			SEQ,
+			APPLY_NO,
+			REAL_FILE_NAME,
+			REAL_FILE_PATH,
+			SAVED_FILE_NAME,
+			SAVED_FILE_PATH,
+			FILE_TYPE,
+			EXTENTION,
+			FILE_SIZE,
+			TO_CHAR(REG_DATE, 'YYYY-MM-DD') AS REG_DATE,
+			KIND
+		FROM HJDB.ATC223TL
+		WHERE 1=1
+		AND SEQ = #seq#		
+	</select>
+	
+	<select id="seqNextVal" resultClass="string">
+		SELECT DATA_SEQUENCE.NEXTVAL AS SEQ FROM DUAL
+	</select>
+	
+	<insert id="insertFileProc">
+		INSERT INTO HJDB.ATC223TL (
+			YY,
+			TERM,
+			SEQ,
+			APPLY_NO,
+			REAL_FILE_NAME,
+			REAL_FILE_PATH,
+			SAVED_FILE_NAME,
+			SAVED_FILE_PATH,
+			FILE_TYPE,
+			EXTENTION,
+			FILE_SIZE,
+			REG_DATE,
+			KIND
+		) VALUES(
+			#yy#,
+			#term#,
+			DATA_SEQUENCE.NEXTVAL,
+			#applyNo#,
+			#realFileName#,
+			#realFilePath#,
+			#savedFileName#,
+			#savedFilePath#,
+			#fileType#,
+			#extention#,
+			#fileSize#,
+			SYSDATE,
+			#kind#
+		)
+	</insert>
+
+	<delete id="deleteFileProc">
+		DELETE FROM HJDB.ATC223TL WHERE SEQ = #seq#
+	</delete>
+	
+	
+</sqlMap>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Career">
+
+	<typeAlias alias="Career" type="com.itsp.vo.CareerVO" />
+    
+    <resultMap id="MapForCareerData" class="Career">    
+	    <result property="yy" column="yy" />		
+		<result property="term" column="term" />		
+		<result property="applyNo" column="apply_no" />
+		<result property="careerSeq" column="career_seq" />
+		<result property="dateFrom" column="date_from" />
+		<result property="dateTo" column="date_to" />
+		<result property="institution" column="institution" />
+		<result property="position" column="position" />
+		<result property="career" column="career" />	
+		<result property="careerGbn" column="career_gbn" />			
+	</resultMap>
+	
+	<select id="seqNextVal" resultClass="string">
+		SELECT DATA_SEQUENCE.NEXTVAL AS SEQ FROM DUAL
+	</select>	
+	
+	<select id="selectCountCareerData" resultClass="int">
+		SELECT COUNT(*)
+		FROM HJDB.ATC214TL 
+		WHERE career_seq = #careerSeq#
+		AND apply_no = #applyNo#
+	</select>	
+	
+	<select id="selectCareerData" resultMap="MapForCareerData">
+		SELECT 
+			yy,
+			term,
+			apply_no,
+			career_seq,
+			date_from,
+			date_to,
+			institution	,
+			position,
+			career,
+			career_gbn				
+		FROM HJDB.ATC214TL
+		WHERE apply_no = #applyNo#
+		ORDER BY date_from ASC
+	</select>
+	
+	<insert id="saveProcCareerData">
+		INSERT INTO HJDB.ATC214TL (
+			yy,
+			term,
+			apply_no,
+			career_seq,
+			date_from,
+			date_to,
+			institution,
+			position,
+			career,
+			career_gbn
+		)VALUES(
+			#yy#,
+			#term#,
+			#applyNo#,
+			#careerSeq#,
+			#dateFrom#,
+			#dateTo#,
+			#institution#,
+			#position#,
+			#career#,	
+			#careerGbn#			
+		)
+	</insert>
+	
+	<update id="updateProcCareerData">
+		UPDATE HJDB.ATC214TL SET
+			date_from = #dateFrom#,
+			date_to = #dateTo#,
+			career = #career#,
+			position = #position#,
+			institution = #institution#,
+			career_gbn = #careerGbn#
+		WHERE career_seq = #careerSeq#
+		AND apply_no = #applyNo#
+	</update>
+	
+	<delete id="deleteProcCareerData">
+		DELETE FROM HJDB.ATC214TL 
+		WHERE career_seq = #careerSeq#
+		AND apply_no = #applyNo#
+	</delete>
+	
+	
+	
+	
+	<!-- <select id="selectSysdate" resultClass="int">
+		SELECT SYSDATE FROM DUAL
+	</select> -->
+
+</sqlMap>

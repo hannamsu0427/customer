@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Submit">
+
+	<typeAlias alias="Submit" type="com.itsp.vo.SubmitVO" />
+    
+    <!-- <resultMap id="MapForCareerData" class="Career">    
+	    <result property="yy" column="yy" />		
+		<result property="term" column="term" />		
+		<result property="applyNo" column="apply_no" />
+		<result property="careerSeq" column="career_seq" />
+		<result property="dateFrom" column="date_from" />
+		<result property="dateTo" column="date_to" />
+		<result property="institution" column="institution" />
+		<result property="position" column="position" />
+		<result property="career" column="career" />				
+	</resultMap> -->
+	
+	<update id="updateProcSubmitData" >
+		UPDATE HJDB.ATC210TL 
+		SET 
+			confirm_yn = #confirmYn#,
+			confirm_no = #confirmNo#,
+			<isEqual property="confirmYn" compareValue="N">
+			confirm_date = NULL
+			</isEqual>
+			<isEqual property="confirmYn" compareValue="Y">
+			confirm_date = SYSDATE
+			</isEqual>
+		WHERE
+			apply_no = #applyNo#
+			and yy = #yy#
+			and term = #term#
+	</update>
+	
+	<insert id="insertProcSubmitDataLog" >
+		INSERT INTO HJDB.ATC219TL (
+			yy,
+			term,
+			apply_no,
+			apply_date,
+			apply_gubun
+		)VALUES(
+			#yy#,
+			#term#,
+			#applyNo#,
+			SYSDATE,
+			#applyGubun#
+		)
+	</insert>
+	
+	
+	<!-- <select id="selectSysdate" resultClass="int">
+		SELECT SYSDATE FROM DUAL
+	</select> -->
+
+</sqlMap>

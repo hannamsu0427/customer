@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="User">
+
+	<typeAlias alias="User" type="com.itsp.vo.UserVO" />
+
+	<resultMap id="MapForSelectUserInfo" class="User">
+		<result property="id" column="id" />
+		<result property="name" column="name" />
+	</resultMap>
+	
+	<select id="selectUserInfo" resultMap="MapForSelectUserInfo">
+		SELECT 
+			id,
+			name
+		FROM TB_USER
+		WHERE id = #id#
+		AND password = #password# 
+	</select>
+	
+	<select id="totalCount" resultClass="int">
+		SELECT COUNT(*)
+		FROM TB_USER
+		where 1=1
+		<isNotEmpty prepend="AND" property="id">
+			id = #id#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="password">
+			password = #password#
+		</isNotEmpty>		
+	</select>
+	
+	<select id="totalCountBranch" resultClass="int">
+		SELECT COUNT(*)
+		FROM HJDB.ATC210TL
+		WHERE 1=1
+		AND yy=#yy#
+		AND term=#term#
+		<isNotEmpty prepend="AND" property="name">
+			name = #name#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="email">
+			email = #email#
+		</isNotEmpty>
+	</select>
+	
+	<select id="totalCountconfirmYn" resultClass="int">
+		SELECT COUNT(*)
+		FROM HJDB.ATC210TL
+		WHERE 1=1
+		AND yy=#yy#
+		AND term=#term#
+		<isNotEmpty prepend="AND" property="applyNo">
+			apply_no = #applyNo#
+		</isNotEmpty>
+			AND confirm_yn = 'Y'
+	</select>
+	
+	
+	
+	
+	
+	
+	
+	
+	<!-- <select id="selectSysdate" resultClass="int">
+		SELECT SYSDATE FROM DUAL
+	</select> -->
+
+</sqlMap>

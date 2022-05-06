@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Customer">
+
+	<typeAlias alias="Customer" type="com.itsp.vo.CustomerVO" />
+
+	<resultMap id="MapForCustomerList" class="Customer">
+		<result property="rnum" column="RNUM" />
+		<result property="seq" column="SEQ" />		
+		<result property="name" column="name" />
+		<result property="phone1" column="phone1" />
+		<result property="phone2" column="phone2" />
+		<result property="phone3" column="phone3" />
+		<result property="contents" column="contents" />
+		<result property="regDate" column="reg_date" />
+		<result property="sex" column="sex" />
+	</resultMap>
+	
+	<resultMap id="MapForCustomerData" class="Customer">
+		<result property="seq" column="SEQ" />		
+		<result property="name" column="name" />
+		<result property="phone1" column="phone1" />
+		<result property="phone2" column="phone2" />
+		<result property="phone3" column="phone3" />
+		<result property="contents" column="contents" />
+		<result property="regDate" column="reg_date" />
+		<result property="sex" column="sex" />
+		<result property="totalPrice" column="total_price" />
+	</resultMap>
+	
+	<select id="totalCount" resultClass="int">
+		SELECT COUNT(*) 
+		FROM TB_CUSTOMER 
+		WHERE 1=1
+		<isNotEmpty prepend="AND" property="phone1">
+		phone1 = #phone1#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="phone2">
+		phone2 = #phone2#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="phone3">
+		phone3 = #phone3#
+		</isNotEmpty>
+	</select>
+	
+	<select id="pageCount" resultClass="int">
+		SELECT COUNT(*) 
+		FROM TB_CUSTOMER 
+		WHERE 1=1
+		
+		<isNotEmpty prepend="AND" property="searchValue">
+		(
+		name LIKE CONCAT('%',#searchValue#,'%')
+		OR
+		phone3 LIKE CONCAT('%',#searchValue#,'%')
+		)
+		</isNotEmpty>
+	</select>
+	
+	<insert id="saveProcCustomerData" >
+		INSERT INTO TB_CUSTOMER (
+			name,
+			phone1,
+			phone2,
+			phone3,
+			contents,
+			reg_date,
+			sex
+		)VALUES(
+			#name#,
+			#phone1#,
+			#phone2#,
+			#phone3#,
+			#contents#,
+			now(),
+			#sex#			
+		)
+		<selectKey keyProperty="seq" resultClass="int" type="post">
+			SELECT LAST_INSERT_ID() as seq
+		</selectKey>
+	</insert>
+	
+	<update id="updateProcCustomerData">
+		UPDATE TB_CUSTOMER
+		SET
+			name = #name#,
+			phone1 = #phone1#,
+			phone2 = #phone2#,
+			phone3 = #phone3#,
+			contents = #contents#,
+			mod_date = now(),
+			sex = #sex#			
+		WHERE SEQ = #seq#
+	</update>
+	
+	<select id="selectCustomerList" resultMap="MapForCustomerList">
+		SELECT @ROWNUM:=@ROWNUM+1 AS RNUM, A.* FROM(
+			SELECT 
+				seq,
+				name,
+				phone1,
+				phone2,
+				phone3,
+				contents,
+				reg_date,
+				sex
+			FROM TB_CUSTOMER
+			WHERE 1=1
+				<isNotEmpty property="searchValue" prepend="AND">
+				(
+					name LIKE CONCAT('%',#searchValue#,'%')
+					OR
+					phone3 LIKE CONCAT('%',#searchValue#,'%')
+				)
+				</isNotEmpty>
+			) A , (SELECT @ROWNUM:=#startNum#) R 
+		ORDER BY A.reg_date DESC 
+		LIMIT #startNum#,#endNum#
+	</select>
+	
+	<select id="selectCustomerData" resultMap="MapForCustomerData">
+		SELECT
+			seq,
+			name,
+			phone1,
+			phone2,
+			phone3,
+			contents,
+			reg_date,
+			sex,
+			(SELECT SUM(price)
+			from TB_PROC
+			WHERE parent_seq = #seq#) AS total_price
+		FROM TB_CUSTOMER
+		WHERE SEQ = #seq#
+	</select>
+	
+	<delete id="deleteCustomerData">
+		DELETE FROM TB_CUSTOMER
+		WHERE SEQ = #seq#
+	</delete>
+</sqlMap>

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="AdminMember">
+
+	<typeAlias alias="AdminMember" type="com.itsp.vo.admin.AdminMemberVO" />
+	
+	<resultMap id="MapForselectUserData" class="AdminMember">
+		<result property="yy" column="yy" />
+		<result property="term" column="term" />
+		<result property="userId" column="user_id" />
+		<result property="userName" column="user_name" />
+		<result property="dptCd1" column="dpt_cd1" />
+		<result property="dptCd2" column="dpt_cd2" />
+	</resultMap>
+	
+	<select id="totalCount" resultClass="int">
+		SELECT COUNT(*)
+		FROM HJDB.ATC222TL
+		WHERE 1=1
+		AND yy = #yy#
+		AND term = #term#
+		<isNotEmpty prepend="AND" property="userId">
+			user_id = #userId#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="password">
+			password = dbsec.SDB_CRYPTO.ENCRYPT(#password#, 'HJDB','ATC222TL', 'password', 'select')
+		</isNotEmpty>
+	</select>
+	
+	<select id="totalSuperCount" resultClass="int">
+		SELECT COUNT(*)
+		FROM HJDB.ATC221TL
+		WHERE 1=1
+		<isNotEmpty prepend="AND" property="userId">
+			user_id = #userId#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="password">
+			password = dbsec.SDB_CRYPTO.ENCRYPT(#password#, 'HJDB','ATC221TL', 'password', 'select')
+		</isNotEmpty>
+	</select>
+	
+	
+	
+	<select id="selectUserData" resultMap="MapForselectUserData">
+		select 
+			yy,
+			term,
+			user_id,
+			user_name,
+			dpt_cd1,
+			dpt_cd2
+		FROM HJDB.ATC222TL
+		WHERE 1=1
+		<isNotEmpty prepend="AND" property="userId">
+			user_id = #userId#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="password">
+			password = dbsec.SDB_CRYPTO.ENCRYPT(#password#, 'HJDB','ATC222TL', 'password', 'select')
+		</isNotEmpty>
+		AND yy = #yy#
+		AND term = #term#
+	</select>
+
+	<!-- <resultMap id="MapForselectApplyInformation" class="Member">
+		<result property="yy" column="yy" />
+		<result property="term" column="term" />
+		<result property="rdateFrom" column="rdate_from" />
+		<result property="rdateTo" column="rdate_to" />
+	</resultMap>
+	
+	
+	<select id="totalCount" resultClass="int">
+		SELECT COUNT(*)
+		FROM HJDB.ATC210TL
+		WHERE 1=1
+		<isNotEmpty prepend="AND" property="name">
+			name = #name#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="email">
+			email = #email#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="password">
+			password = dbsec.SDB_CRYPTO.ENCRYPT(#password#, 'HJDB','ATC210TL', 'password', 'select')
+		</isNotEmpty>
+	</select>
+	
+	<select id="totalCountBranch" resultClass="int">
+		SELECT COUNT(*)
+		FROM HJDB.ATC210TL
+		WHERE 1=1
+		<isNotEmpty prepend="AND" property="name">
+			name = #name#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="email">
+			email = #email#
+		</isNotEmpty>
+	</select>
+	
+	<select id="totalCountconfirmYn" resultClass="int">
+		SELECT COUNT(*)
+		FROM HJDB.ATC210TL
+		WHERE 1=1
+		<isNotEmpty prepend="AND" property="applyNo">
+			apply_no = #applyNo#
+		</isNotEmpty>
+			AND confirm_yn = 'Y'
+	</select>
+	
+	
+	
+	<select id="selectApplyInformation" resultMap="MapForselectApplyInformation">
+		SELECT YY, TERM, RDATE_FROM, RDATE_TO
+		FROM HJDB.ATC201TL
+		WHERE APPLY_YN = 'Y'
+	</select> -->
+	
+	<!-- <select id="selectSysdate" resultClass="int">
+		SELECT SYSDATE FROM DUAL
+	</select> -->
+
+</sqlMap>

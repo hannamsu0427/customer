@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Proc">
+
+	<typeAlias alias="Proc" type="com.itsp.vo.ProcVO" />
+
+	<resultMap id="MapForProcData" class="Proc">
+		<result property="rnum" column="RNUM" />
+		<result property="seq" column="seq" />
+		<result property="name" column="name" />
+		<result property="phone3" column="phone3" />
+		<result property="parentSeq" column="parent_seq" />
+		<result property="procDate" column="proc_date" />
+		<result property="procCode" column="proc_code" />
+		<result property="practitionerCode" column="practitioner_code" />
+		<result property="procExt" column="proc_ext" />
+		<result property="price" column="price" />
+		<result property="procName" column="proc_name" />
+		<result property="practitionerName" column="practitioner_name" />	
+	</resultMap>
+	
+	<resultMap id="MapForPriceData" class="Proc">
+		<result property="seq" column="seq" />
+		<result property="name" column="name" />
+		<result property="phone3" column="phone3" />
+		<result property="parentSeq" column="parent_seq" />
+		<result property="procDate" column="proc_date" />
+		<result property="price" column="price" />	
+	</resultMap>	
+	
+	<insert id="saveProcData">
+		INSERT INTO TB_PROC (
+			parent_seq,
+			proc_date,
+			proc_code,
+			practitioner_code,
+			proc_ext,
+			price
+		)VALUES(
+			#parentSeq#,
+			#procDate#,
+			#procCode#,
+			#practitionerCode#,
+			#procExt#,
+			#price#		
+		)
+	</insert>
+	
+	<select id="pageCount" resultClass="int">
+		SELECT COUNT(*)
+		FROM TB_PROC p, TB_CUSTOMER c
+		WHERE 1=1
+		AND c.seq = p.parent_seq
+		<isNotEmpty property="parent_seq" prepend="AND">
+			p.parent_seq = #parent_seq# 
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="searchBy">
+			<isEqual property="searchBy" compareValue="customerName">						
+				c.name LIKE CONCAT('%',#searchValue#,'%')
+			</isEqual>
+			<isEqual property="searchBy" compareValue="oneDay">						
+				p.proc_date = #procDate# 
+			</isEqual>
+			<isEqual property="searchBy" compareValue="day">
+				p.proc_date >= #startDay#
+			</isEqual>
+			<isEqual property="searchBy" compareValue="day" prepend="AND">
+				#endDay# >= p.proc_date
+			</isEqual>
+			<isEqual property="searchBy" compareValue="phone">						
+				c.phone3 = #phone# 
+			</isEqual>
+		</isNotEmpty>
+	</select>
+	
+	<select id="selectProcList" resultMap="MapForProcData">		
+		SELECT @ROWNUM:=@ROWNUM+1 AS RNUM, A.* FROM(
+			SELECT 
+				p.seq,	
+				p.parent_seq,
+				p.proc_date,
+				p.proc_code,
+				p.practitioner_code,
+				p.proc_ext,
+				p.price,
+				(SELECT code_name FROM TB_CODE b WHERE b.code = p.proc_code ) AS proc_name,
+				(SELECT code_name FROM TB_CODE d WHERE d.code = p.practitioner_code ) AS practitioner_name,
+				(SELECT name FROM TB_CUSTOMER r WHERE r.seq = p.parent_seq ) AS name,
+				(SELECT phone3 FROM TB_CUSTOMER r WHERE r.seq = p.parent_seq ) AS phone3
+			FROM TB_PROC p
+			WHERE 1=1
+				<isNotEmpty property="parent_seq" prepend="AND">
+					p.parent_seq = #parent_seq# 
+				</isNotEmpty>
+				<isNotEmpty prepend="AND" property="searchBy">					
+					<isEqual property="searchBy" compareValue="oneDay">						
+					p.proc_date = #procDate#
+					</isEqual>
+					<isEqual property="searchBy" compareValue="day">
+					p.proc_date >= #startDay#
+					</isEqual>
+					<isEqual property="searchBy" compareValue="day" prepend="AND">
+					#endDay# >= p.proc_date
+					</isEqual>
+				</isNotEmpty>
+			) A , (SELECT @ROWNUM:=#startNum#) R 		
+			<isEqual property="searchBy" compareValue="customerName">						
+			where A.name LIKE CONCAT('%',#searchValue#,'%')
+			</isEqual>	
+			<isEqual property="searchBy" compareValue="phone">						
+			where A.phone3 LIKE CONCAT('%',#searchValue#,'%')
+			</isEqual>					
+			<isEmpty property="searchBy">
+			ORDER BY  A.proc_date DESC
+			</isEmpty>
+		<isNotEmpty property="startNum">
+		LIMIT #startNum#,#endNum#
+		</isNotEmpty>
+	</select>
+	
+	<select id="selectPriceList" resultMap="MapForPriceData">		
+			SELECT 
+				p.seq,	
+				p.parent_seq,
+				p.proc_date,
+				p.price,
+				c.name,
+				c.phone3
+			FROM TB_PROC p, TB_CUSTOMER c
+			WHERE p.parent_seq = c.seq
+				<isNotEmpty property="parent_seq" prepend="AND">
+					p.parent_seq = #parent_seq# 
+				</isNotEmpty>
+				<isNotEmpty prepend="AND" property="searchBy">					
+					<isEqual property="searchBy" compareValue="oneDay">						
+					p.proc_date = #procDate#
+					</isEqual>
+					<isEqual property="searchBy" compareValue="day">
+					p.proc_date >= #startDay#
+					</isEqual>
+					<isEqual property="searchBy" compareValue="day" prepend="AND">
+					#endDay# >= p.proc_date
+					</isEqual>
+					<isEqual property="searchBy" compareValue="customerName">						
+					c.name LIKE CONCAT('%',#searchValue#,'%')
+					</isEqual>	
+					<isEqual property="searchBy" compareValue="phone">					
+					c.phone3 LIKE CONCAT('%',#searchValue#,'%')
+					</isEqual>
+				</isNotEmpty>
+	</select>
+	
+	<delete id="deleteProcData">
+		DELETE FROM TB_PROC
+		WHERE 1=1
+		<isNotEmpty property="seq" prepend="AND">
+		SEQ = #seq#
+		</isNotEmpty>
+		<isNotEmpty property="parentSeq" prepend="AND">
+		PARENT_SEQ = #parentSeq#
+		</isNotEmpty>
+	</delete>
+	
+	<!-- <update id="updateProcPersonalData">
+		UPDATE HJDB.ATC210TL 
+		SET 
+			yy = #yy#,
+			term = #term#,		
+			branch_seq = #branchSeq#,
+			name = #name#,			
+			name_eng = #nameEng#,
+			birth_date = #birthDate#,
+			age = #age#,
+			sex = #sex#,
+			nationality = (select fname from CDDB.KCH041M where CODE = #nationCode#),
+			zip_code = #zipCode#,
+			address1 = #address1#,
+			address2 = #address2#,
+			address3 = #address3#,
+			mobile_number = #mobileNumber#,
+			email = #email#,
+			nation_code = #nationCode#			
+			<isNotEmpty property="password" prepend=",">
+			password = #password#
+			</isNotEmpty>
+		WHERE apply_no = #applyNo#
+	</update> -->
+	
+	<!-- <update id="updateProcPersonalDocData">
+		UPDATE HJDB.ATC210TL 
+		SET 
+			apply_no = #applyNo#
+			<isNotEmpty property="diplomaDoc" prepend=",">		
+			diploma_doc = #diplomaDoc#		
+			</isNotEmpty>
+			<isNotEmpty property="careerDoc" prepend=",">		
+			career_doc = #careerDoc#		
+			</isNotEmpty>
+			<isNotEmpty property="researchDoc" prepend=",">		
+			research_doc = #researchDoc#		
+			</isNotEmpty>	
+			<isNotEmpty property="syllabusDoc" prepend=",">
+			syllabus_doc = #syllabusDoc#
+			</isNotEmpty>
+			<isNotEmpty property="etcDoc" prepend=",">
+			etc_doc = #etcDoc#
+			</isNotEmpty>
+		WHERE apply_no = #applyNo#
+	</update> -->
+	
+	<!-- <select id="selectPersonalData" resultMap="MapForPersonalData">
+		SELECT 		
+			yy,
+			term,
+			apply_no,
+			apply_date,
+			confirm_yn,
+			confirm_date,
+			confirm_no,
+			branch_seq,
+			name,
+			name_eng,
+			birth_date,
+			age,
+			sex,
+			nationality,
+			zip_code,
+			address1,
+			address2,
+			address3,
+			mobile_number,
+			phone_number,
+			office_number,
+			email,
+			diploma_doc,
+			career_doc,
+			research_doc,
+			syllabus_doc,
+			pass_gubun,
+			nation_code
+		FROM HJDB.ATC210TL
+		WHERE 1=1 
+		AND rownum = 1
+		AND yy=#yy#
+		AND term=#term#
+		<isNotEmpty property="applyNo" prepend="AND">
+		apply_no = #applyNo#
+		</isNotEmpty>		
+		<isEmpty property="applyNo" prepend="AND">
+		name = #name#	
+		and email = #email#
+		</isEmpty>		
+		<isNotEmpty property="branchSeq" prepend="AND">
+		branch_seq = #branchSeq#
+		</isNotEmpty>
+		
+	</select>
+	
+	<select id="selectPersonalDataBranch" resultMap="MapForPersonalDataBranch">
+		SELECT B.BRANCH_SEQ, B.BRANCH, A.APPLY_NO, NVL(C.SYS030_FNAME, D.SYS020_FNAME) SYS030_FNAME, D.SYS020_FNAME, D.SYS020_COL_CD, C.SYS030_DPT_CD, A.confirm_yn
+		FROM HJDB.ATC210TL A
+		INNER JOIN HJDB.ATC202TL B ON A.BRANCH_SEQ = B.BRANCH_SEQ
+		LEFT JOIN HJDB.SYS030TL C /*학과*/ ON B.DPT_CD2 = C.SYS030_DPT_CD
+		LEFT JOIN HJDB.SYS020TL D /*대학*/ ON B.DPT_CD1 = D.SYS020_COL_CD		
+		WHERE 
+		A.name = #name#
+		AND A.email = #email#
+		AND A.yy = #yy#
+		AND A.term = #term#
+		ORDER BY D.SYS020_COL_CD, C.SYS030_DPT_CD , B.BRANCH ASC		
+	</select> -->
+	
+	
+	
+	
+	<!-- <select id="selectSysdate" resultClass="int">
+		SELECT SYSDATE FROM DUAL
+	</select> -->
+
+</sqlMap>

@@ -1,0 +1,26 @@
+.container.main {position:relative;min-width:100%;padding:183px 0 0 0 !important; background: url(/images/main/bg_main.png) no-repeat 50% 183px;}
+.main_cont {margin:0 auto;width:1200px;height:767px;box-sizing: border-box; padding:295px 42px 0 42px;background: url(/images/main/bg_main_cont.png) no-repeat 50% 255px;}
+.main_cont h3 {float:left;width:320px;padding-left:30px;border-top:1px solid #000;color:#fff;font-size:20px;font-weight:700;line-height:79px;letter-spacing:-0.025em;}
+.main_cont h3 span {font-family:Tahoma,sans-serif;font-weight:300}
+.main_cont .bg_board {background-color:#2a88bf}
+.main_cont .bg_calendar {background-color:#e0a009}
+
+.link_more {position:absolute;left:298px;top:1px;width:22px;height:22px;background:rgba(0, 0, 0, 0.5)}
+.link_more a {display:block;height:22px;text-indent:-9999px;background:url(/images/main/bt_link_more.png) no-repeat 0 0;opacity:0.5}
+.main_cont .row {overflow:hidden;position:relative;}
+.board_list {float:right;width:750px;}
+.board_list > ul {height: 210px;}
+.board_list > ul > li {background-color:#fff;border-bottom:1px solid #d4d4d4;}
+.board_list > ul > li:nth-child(even) {background-color:#f9f9f9;}
+.board_list > ul > li > .subject {display:block;width:750px;padding:0;font-size:0;line-height:40px;}
+.board_list > ul > li > .subject > .subject_click {display:inline-block;vertical-align:middle;max-width:80%;font-size:15px;font-weight:bold;color:#555;}
+.board_list > ul > li > .subject > .subject_click:hover {color:#067244 !important;}
+.board_list > ul > li > .subject > .write_date {float:right;display:inline-block;width:80px;vertical-align:middle;font-size:15px;color:#a6a6a6;}
+
+.calendar_list {float:right;width:750px;}
+.calendar_list > ul {height:210px;}
+.calendar_list > ul > li {display:table;width:750px;}
+.calendar_list .mm_dd {display:table-cell;width:110px;vertical-align:middle;height:41px;border-bottom:1px solid #000;color:#000;font-size:20px;font-weight:700;letter-spacing:-0.025em}
+.calendar_list .mm_dd_desc {display:table-cell;width:640px;vertical-align:middle;height:41px;border-bottom:1px solid #d4d4d4;letter-spacing:-0.025em}
+.calendar_list .mm_dd_desc .subject_click {display:block;max-width:600px;font-size:15px;font-weight:bold;color:#555;padding-left:10px;}
+.calendar_list .mm_dd_desc .subject_click:hover {color:#067244 !important;}

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Education">
+
+	<typeAlias alias="Education" type="com.itsp.vo.EducationVO" />
+    
+    <resultMap id="MapForEducationData" class="Education">    
+	    <result property="yy" column="yy" />		
+		<result property="term" column="term" />		
+		<result property="applyNo" column="apply_no" />
+		<result property="diplomaCode" column="diploma_code" />
+		<result property="diplomaSeq" column="diploma_seq" />
+		<result property="dateFrom" column="date_from" />
+		<result property="dateTo" column="date_to" />
+		<result property="major" column="major" />
+		<result property="degree" column="degree" />
+		<result property="institution" column="institution" />
+		<result property="highestLevel" column="highest_level" />
+		<result property="interGbn" column="inter_gbn" />
+		
+	</resultMap>
+	
+	 <resultMap id="MapForDiplomaCode" class="Education">    
+	 	<result property="fname" column="fname" />
+		<result property="code" column="code" />
+	</resultMap>
+	
+	 <resultMap id="MapForDiplomaCodeList" class="Education">  	 	
+	 	<result property="diplomaCode" column="diploma_code" />
+	</resultMap>
+	
+	<select id="seqNextVal" resultClass="string">
+		SELECT DATA_SEQUENCE.NEXTVAL AS SEQ FROM DUAL
+	</select>	
+	
+	<select id="selectEducationData" resultMap="MapForEducationData">
+		SELECT 
+			yy,
+			term,
+			apply_no,
+			diploma_seq,
+			diploma_code,
+			date_from,
+			date_to,
+			major,
+			degree,
+			institution,
+			highest_level,
+			inter_gbn		
+		FROM HJDB.ATC211TL
+		WHERE apply_no = #applyNo#
+		ORDER BY diploma_seq ASC
+	</select>
+	
+	<select id="selectCountEducationData" resultClass="int">
+		SELECT COUNT(*)
+		FROM HJDB.ATC211TL 
+		WHERE 1=1
+		AND apply_no = #applyNo#
+		<isNotEmpty property="highestLevel" prepend="AND"><!-- 최종학력 체크여부 검증 -->
+		highest_Level = 'Y'
+		</isNotEmpty>
+		<isEmpty property="highestLevel" prepend="AND">
+		diploma_seq = #diplomaSeq#
+		</isEmpty>
+	</select>
+	
+	<insert id="saveProcEducationData">
+		INSERT INTO HJDB.ATC211TL (
+			yy,
+			term,
+			apply_no,
+			diploma_seq,
+			diploma_code,
+			date_from,
+			date_to,
+			major,
+			degree,
+			institution,
+			highest_level,
+			inter_gbn
+		)VALUES(
+			#yy#,
+			#term#,
+			#applyNo#,
+			#diplomaSeq#,
+			#diplomaCode#,
+			#dateFrom#,
+			#dateTo#,
+			#major#,
+			#degree#,
+			#institution#,
+			#highestLevel#,
+			#interGbn#			
+		)
+	</insert>
+	
+	<update id="updateProcEducationData">
+		UPDATE HJDB.ATC211TL SET
+			diploma_code = #diplomaCode#,
+			date_from = #dateFrom#,
+			date_to = #dateTo#,
+			major = #major#,
+			degree = #degree#,
+			institution = #institution#,
+			highest_level = #highestLevel#,
+			inter_gbn = #interGbn#
+		WHERE diploma_seq = #diplomaSeq#
+		AND apply_no = #applyNo#
+	</update>
+	
+	<delete id="deleteProcEducationData">
+		DELETE FROM HJDB.ATC211TL 
+		WHERE diploma_seq = #diplomaSeq#
+		AND apply_no = #applyNo#
+	</delete>
+
+
+	<select id="selecDiplomaCode" resultMap="MapForDiplomaCode">
+		SELECT FNAME, CODE FROM HJDB.KCH001M 
+		WHERE 
+		TYPE='diploma_code'
+		AND CODE > 10
+	</select>
+	
+	<select id="selectCodeList" resultMap="MapForDiplomaCodeList">
+		SELECT 
+			diploma_code		
+		FROM HJDB.ATC211TL
+		WHERE apply_no = #applyNo#
+		ORDER BY date_from ASC
+	</select>
+	
+	<!-- <select id="selectSysdate" resultClass="int">
+		SELECT SYSDATE FROM DUAL
+	</select> -->
+
+</sqlMap>
